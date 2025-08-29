@@ -17,14 +17,11 @@
   </div>
   <div class="card mood-log" id="mood-log-card" style="margin-top:16px">
     <div class="mood-log__header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-      <!-- 标题 -->
       <h3 id="mood-log-title">Your Daily Mood Log</h3>
-      <!-- 切换按钮 -->
       <button type="button" id="toggle-mood-log" class="btn btn-secondary" style="white-space:nowrap;">
         Show Partner
       </button>
     </div>
-    <!-- 我的 6 个 -->
     <div class="mood-log__row" id="mine-row">
       <% @user.checkins.order(created_at: :desc).limit(6).reverse.each do |checkin| %>
         <div class="mood-log__cell">
@@ -33,7 +30,6 @@
         </div>
       <% end %>
     </div>
-    <!-- Partner 的 6 个（初始隐藏） -->
     <div class="mood-log__row" id="partner-row" style="display:none">
       <% @user.current_partner.checkins.order(created_at: :desc).limit(6).reverse.each do |checkin| %>
         <div class="mood-log__cell">
@@ -57,13 +53,13 @@
         const showingMine = mine.style.display !== 'none';
 
         if (showingMine) {
-          // 切到 Partner
+
           mine.style.display = 'none';
           partner.style.display = '';
           title.textContent = "<%= @user.current_partner.username %>'s Daily Mood Log";
           btn.textContent = 'Show Me';
         } else {
-          // 切回 Me
+
           partner.style.display = 'none';
           mine.style.display = '';
           title.textContent = "Your Daily Mood Log";
@@ -79,9 +75,22 @@
   <div class="bulma header" style="margin-top:16px">
     <h2><%= @user.current_partner.username %>'s Mood Check-in</h2>
   </div>
-  <div class="mood-list">
+  <div class="checkin-toolbar" style="display:flex;align-items:center;gap:8px;margin:8px 0 12px;">
+    <select id="checkin-sort" class="form-select" style="max-width: 200px;">
+      <option value="newest" selected>Newest</option>
+      <option value="oldest">Oldest</option>
+      <option value="unread">Unread</option>
+      <option value="read">Read</option>
+    </select>
+  </div>
+  <div class="mood-list" id="partner-checkins">
+    <% viewed = session[:viewed_checkins] || [] %>
     <% @user.current_partner.checkins.order(created_at: :desc).each do |checkin| %>
-      <div class="check-in-card d-flex align-items-center gap-3 <%= 'faded' if session[:viewed_checkins]&.include?(checkin.id) %>">
+      <% read = viewed.include?(checkin.id) %>
+      <div
+      class="check-in-card d-flex align-items-center gap-3 <%= 'faded' if read %>"
+      data-created-at="<%= checkin.created_at.to_i %>"
+      data-read="<%= read %>">
         <%= image_tag "#{@user.current_partner.username}.png", class: "checkin-avatar", alt: @user.current_partner.username %>
         <div>
           <%= link_to "#{@user.current_partner.username} checked in as #{checkin.mood}", checkin_path(checkin) %>
@@ -92,3 +101,56 @@
   </div>
 </div>
 </div>
+<script>
+  (function () {
+    const select = document.getElementById('checkin-sort');
+    const list   = document.getElementById('partner-checkins');
+    if (!select || !list) return;
+
+    function sortAndFilter() {
+      const value = select.value;
+      const items = Array.from(list.children);
+
+
+      items.forEach(el => el.style.display = '');
+
+
+      let visible = items;
+      if (value === 'unread_only') {
+        visible = items.filter(el => el.dataset.read === 'false');
+
+        items.forEach(el => {
+          if (el.dataset.read !== 'false') el.style.display = 'none';
+        });
+      }
+
+
+      const byTimeDesc = (a, b) => (+b.dataset.createdAt) - (+a.dataset.createdAt);
+      const byTimeAsc  = (a, b) => (+a.dataset.createdAt) - (+b.dataset.createdAt);
+      const unreadFirst = (a, b) => {
+        const ua = (a.dataset.read === 'false') ? 0 : 1;
+        const ub = (b.dataset.read === 'false') ? 0 : 1;
+        return ua - ub || byTimeDesc(a, b);
+      };
+      const readFirst = (a, b) => {
+        const ra = (a.dataset.read === 'true') ? 0 : 1;
+        const rb = (b.dataset.read === 'true') ? 0 : 1;
+        return ra - rb || byTimeDesc(a, b);
+      };
+
+      let sorter = byTimeDesc; // default newest
+      if (value === 'oldest') sorter = byTimeAsc;
+      if (value === 'unread') sorter = unreadFirst;
+      if (value === 'read')   sorter = readFirst;
+
+      if (value === 'unread_only') sorter = byTimeDesc;
+
+
+      visible.sort(sorter).forEach(el => list.appendChild(el));
+    }
+
+    select.addEventListener('change', sortAndFilter);
+
+    sortAndFilter();
+  })();
+</script>
