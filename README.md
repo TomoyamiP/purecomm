@@ -56,18 +56,28 @@ It helps partners stay connected with **daily mood check-ins**, **love-language 
 
 Here’s a look at PureComm in action:  
 
-### 🏠 Landing Page / Dashboard
-<img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757422725/IMG_4342_bcgdb9.png" width="500">
-
-### 😊 Mood Check-In
-<img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757422725/IMG_4339_bfthte.png" width="500">
-
-### 💬 Grievance Drop
-<img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757422725/IMG_4341_fh1vxu.png" width="500">
-
-### 🤖 AI Coach Conversation
-<img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757423852/IMG_4338_sldool.png" width="500">
-
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757422725/IMG_4342_bcgdb9.png" width="350"><br>
+      <b>Landing Page / Dashboard</b>
+    </td>
+    <td align="center">
+      <img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757422725/IMG_4339_bfthte.png" width="350"><br>
+      <b>Mood Check-In</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757422725/IMG_4341_fh1vxu.png" width="350"><br>
+      <b>Grievance Drop</b>
+    </td>
+    <td align="center">
+      <img src="https://res.cloudinary.com/dt4jctqz1/image/upload/v1757423852/IMG_4338_sldool.png" width="350"><br>
+      <b>AI Coach Conversation</b>
+    </td>
+  </tr>
+</table>
 📜 License
 
 This project is licensed under the MIT License. See LICENSE for details.
